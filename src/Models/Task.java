@@ -1,14 +1,14 @@
 package Models;
-
+import TaskManager.TaskStatus;
 import java.util.Objects;
 
 public class Task {
     private Integer id;
     private String name;
     private String description;
-    private String status;
+    private TaskStatus status;
 
-    public Task(Integer id, String name, String description, String status) {
+    public Task(Integer id, String name, String description, TaskStatus status) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -39,11 +39,11 @@ public class Task {
         this.description = description;
     }
 
-    public String getStatus() {
+    public TaskStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(TaskStatus status) {
         this.status = status;
     }
 
@@ -51,11 +51,11 @@ public class Task {
     public String toString() {
         String result = "{name= " + name; //+ ", description= " + description
         if(description != null) {
-        result = result + ", description.lenght= " + description.length();
-    }
+            result = result + ", description.lenght= " + description.length();
+        }
         else {
-        result = result + ", description.lenght= null";
-    }
+            result = result + ", description.lenght= null";
+        }
         result = result + ", id= " + id + ", status= " + status + "}";
         return result;
     }

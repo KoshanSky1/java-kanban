@@ -1,46 +1,47 @@
-package TaskManager;
-
 import Models.Epic;
 import Models.Subtask;
 import Models.Task;
+import TaskManager.Managers;
+import TaskManager.TaskManager;
+import TaskManager.TaskStatus;
 
-import java.util.Scanner; // для проверки работы программы
+import java.util.Scanner;  // для проверки работы программы
+
 public class Main {
-
     public static void main(String[] args) {
         checkTheProgramFunctionality();
     }
 
     static void checkTheProgramFunctionality() { // для проверки работы программы
         Scanner scanner = new Scanner(System.in);
+        TaskManager manager = Managers.getDefault();
 
-        TaskManager manager = new TaskManager();
         Task taskNumberOne = new Task(manager.assignID(), "Купить корм для котиков",
-        "Grandorf с курицей, 18 баночек", "NEW");
+        "Grandorf с курицей, 18 баночек", TaskStatus.NEW);
         Task firstTask = manager.createNewTask(taskNumberOne);
 
         Task taskNumberTwo = new Task(manager.assignID(),"Купить eду для синичек",
-        "Нежареные! семечки/ корм для попугаев",  "NEW");
+        "Нежареные! семечки/ корм для попугаев",  TaskStatus.NEW);
         Task secondTask =  manager.createNewTask(taskNumberTwo);
 
         Epic EpicNumberOne = new Epic(manager.assignID(),"Уборка", "Подготовиться к приходу гостей",
-        "NEW");
+        TaskStatus.NEW);
         Epic firstEpic = manager.createNewEpic(EpicNumberOne);
 
-        Subtask subtaskNumberOne = new Subtask(manager.assignID(),"Помыть пол", "", "NEW",
+        Subtask subtaskNumberOne = new Subtask(manager.assignID(),"Помыть пол", "", TaskStatus.NEW,
         EpicNumberOne.getId());
         Subtask firstSubtask = manager.createNewSubtask(subtaskNumberOne);
 
         Subtask subtaskNumberTwo = new Subtask(manager.assignID(), "Протереть пыль", "",
-        "IN_PROGRESS", EpicNumberOne.getId());
+        TaskStatus.IN_PROGRESS, EpicNumberOne.getId());
         Subtask secondSubtask = manager.createNewSubtask(subtaskNumberTwo);
 
         Epic EpicNumberTwo = new Epic(manager.assignID(), "Накрыть на стол", "Приготовить блюда",
-        "NEW");
+        TaskStatus.NEW);
         Epic secondEpic = manager.createNewEpic(EpicNumberTwo);
 
         Subtask subtaskNumberThree = new Subtask(manager.assignID(), "Испечь торт", "Медовик",
-        "NEW", secondEpic.getId());
+        TaskStatus.IN_PROGRESS, secondEpic.getId());
         Subtask thirdSubtask = manager.createNewSubtask(subtaskNumberThree);
 
         System.out.println("1 - Получить список всех задач");
@@ -57,6 +58,7 @@ public class Main {
         System.out.println("12 - Удалить подзадачу по ID");
         System.out.println("13 - Получить список подзадач по ID эпика");
         System.out.println("14 - Обновить подзадачу");
+        System.out.println("15 - Получить историю просмотренных задач");
 
         while (true) {
             int i = 0;
@@ -103,8 +105,11 @@ public class Main {
                     break;
                 case 14:
                     Subtask subtaskNumber = new Subtask(manager.assignID(), "Испечь пирог", "Манник",
-                    "DONE", secondEpic.getId());
+                    TaskStatus.DONE, secondEpic.getId());
                     Subtask thirdSubtaskUpdate = manager.updateSubtask(7, subtaskNumber);
+                    break;
+                case 15:
+                    manager.getHistory();
                     break;
                 default:
                     scanner.close();
