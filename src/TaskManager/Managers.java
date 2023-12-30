@@ -1,7 +1,6 @@
 package TaskManager;
-public final class Managers {
-    private Managers() {
-    }
+
+public class Managers {
 
     public static TaskManager getDefault() {
         return new InMemoryTaskManager();
