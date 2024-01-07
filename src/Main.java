@@ -73,7 +73,7 @@ public class Main {
 
         Epic EpicNumberTwo = new Epic(manager.assignID(), "Сдать домашнее задание", "",
 
-                TaskStatus.NEW);
+                TaskStatus.IN_PROGRESS);
 
         Epic secondEpic = manager.createNewEpic(EpicNumberTwo);
 
@@ -106,7 +106,6 @@ public class Main {
 
         System.out.println("14 - Обновить подзадачу");
         System.out.println("15 - Получить историю просмотренных задач");
-
 
 
         while (true) {

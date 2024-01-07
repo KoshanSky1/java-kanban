@@ -1,17 +1,13 @@
 package TaskManager;
 
 import Models.Task;
-
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    public HashMap<Integer, Node> taskNodeMap = new HashMap<>();
-
-    Node head = null;
-    Node tail = null;
-
+    private final HashMap<Integer, Node> taskNodeMap = new HashMap<>();
+    private Node head = null;
+    private Node tail = null;
 
     @Override
     public void add(Task task) {
@@ -69,7 +65,6 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
     }
 
-
     public ArrayList<Task> getTasks() {
         ArrayList<Task> history = new ArrayList<>();
         Node currentNode = head;
@@ -79,4 +74,5 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
         return history;
     }
+
 }
