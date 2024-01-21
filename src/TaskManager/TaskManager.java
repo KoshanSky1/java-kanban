@@ -1,6 +1,4 @@
 package TaskManager;
-
-
 import Models.Epic;
 import Models.Subtask;
 import Models.Task;
@@ -10,11 +8,11 @@ public interface TaskManager {
 
     public Integer assignID();
 
-    public Task createNewTask(Task task);
+    public void createNewTask(Task task);
 
-    public Epic createNewEpic(Epic epic);
+    public void createNewEpic(Epic epic);
 
-    public Subtask createNewSubtask(Subtask subtask);
+    public void createNewSubtask(Subtask subtask);
 
     public ArrayList<Task> getAllTasks();
 

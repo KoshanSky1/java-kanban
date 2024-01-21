@@ -1,5 +1,6 @@
 package Models;
 import TaskManager.TaskStatus;
+import TaskManager.TaskTypes;
 import java.util.Objects;
 
 public class Task {
@@ -8,13 +9,15 @@ public class Task {
     private String name;
     private String description;
     private TaskStatus status;
+    private final TaskTypes type;
 
-    public Task(Integer id, String name, String description, TaskStatus status) {
+    public Task(Integer id, String name, String description, TaskStatus status, TaskTypes type) {
 
         this.id = id;
         this.name = name;
         this.description = description;
         this.status = status;
+        this.type = type;
 
     }
 
@@ -69,38 +72,24 @@ public class Task {
     @Override
     public String toString() {
 
-        String result = "{name= " + name; //+ ", description= " + description
-
-        if(description != null) {
-
-            result = result + ", description.lenght= " + description.length();
-
+        String result = id + "," + type + "," + name + "," + status;
+        if(description != null ) {
+            result = result + "," + description;
         }
-
         else {
-
-            result = result + ", description.lenght= null";
-
+            result = result;
         }
-
-        result = result + ", id= " + id + ", status= " + status + "}";
-
         return result;
-
     }
 
     @Override
     public boolean equals(Object o) {
 
         if (this == o) return true;
-
         if (o == null || getClass() != o.getClass()) return false;
-
         Task task = (Task) o;
-
         return id == task.id && Objects.equals(name, task.name) && Objects.equals(description, task.description)
-
-                && Objects.equals(status, task.status);
+                     && Objects.equals(status, task.status);
 
     }
 

@@ -1,14 +1,14 @@
 package Models;
 import TaskManager.TaskStatus;
+import TaskManager.TaskTypes;
 import java.util.ArrayList;
 
 public class Epic extends Task {
 
     private ArrayList<Integer> subtasksId = new ArrayList<>();
+    public Epic(Integer id, String name, String description, TaskStatus status, TaskTypes type) {
 
-    public Epic(Integer id, String name, String description, TaskStatus status) {
-
-        super(id, name, description, status);
+        super(id, name, description, status, type);
 
     }
 
@@ -23,5 +23,4 @@ public class Epic extends Task {
         this.subtasksId = subtasksId;
 
     }
-
 }
