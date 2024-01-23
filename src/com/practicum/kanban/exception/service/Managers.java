@@ -1,5 +1,10 @@
-package TaskManager;
+package com.practicum.kanban.exception.service;
 public class Managers {
+
+    private Managers() {
+
+    }
+
 
     public static TaskManager getDefault() {
 

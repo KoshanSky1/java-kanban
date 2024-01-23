@@ -1,6 +1,5 @@
-package Models;
-import TaskManager.TaskStatus;
-import TaskManager.TaskTypes;
+package com.practicum.kanban.exception.model;
+
 import java.util.Objects;
 
 public class Task {
@@ -9,15 +8,19 @@ public class Task {
     private String name;
     private String description;
     private TaskStatus status;
-    private final TaskTypes type;
 
-    public Task(Integer id, String name, String description, TaskStatus status, TaskTypes type) {
+    public Task(Integer id, String name, String description, TaskStatus status) {
 
         this.id = id;
         this.name = name;
         this.description = description;
         this.status = status;
-        this.type = type;
+
+    }
+
+    public TaskType getType() {
+
+        return TaskType.TASK;
 
     }
 
@@ -72,7 +75,7 @@ public class Task {
     @Override
     public String toString() {
 
-        String result = id + "," + type + "," + name + "," + status;
+        String result = id + "," + getType() + "," + name + "," + status;
         if(description != null ) {
             result = result + "," + description;
         }
@@ -85,11 +88,11 @@ public class Task {
     @Override
     public boolean equals(Object o) {
 
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this.equals(o)) return true;
+        if (o == null || getClass().equals(o.getClass())) return false;
         Task task = (Task) o;
-        return id == task.id && Objects.equals(name, task.name) && Objects.equals(description, task.description)
-                     && Objects.equals(status, task.status);
+        return Objects.equals(id, task.id) && Objects.equals(name, task.name) && Objects.equals(description, task.description)
+               && Objects.equals(status, task.status);
 
     }
 

@@ -1,4 +1,4 @@
-package TaskManager;
+package com.practicum.kanban.exception.model;
 
 public enum TaskStatus {
     NEW,
