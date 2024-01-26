@@ -1,21 +1,17 @@
-package com.practicum.kanban.exception.service;
+package com.practicum.kanban.service;
+
 public class Managers {
 
     private Managers() {
 
     }
 
-
     public static TaskManager getDefault() {
-
         return new InMemoryTaskManager();
-
     }
 
     public static HistoryManager getDefaultHistory() {
-
         return new InMemoryHistoryManager();
-
     }
 
 }

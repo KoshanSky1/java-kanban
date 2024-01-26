@@ -1,4 +1,4 @@
-package com.practicum.kanban.exception.model;
+package com.practicum.kanban.model;
 
 public enum TaskStatus {
     NEW,

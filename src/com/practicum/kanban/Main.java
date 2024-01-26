@@ -1,4 +1,4 @@
-package com.practicum.kanban.exception;
+package com.practicum.kanban;
 
 public class Main {
 

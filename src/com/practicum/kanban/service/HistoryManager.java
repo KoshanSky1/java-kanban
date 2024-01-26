@@ -1,5 +1,7 @@
-package com.practicum.kanban.exception.service;
-import com.practicum.kanban.exception.model.Task;
+package com.practicum.kanban.service;
+
+import com.practicum.kanban.model.Task;
+
 import java.util.List;
 
 public interface HistoryManager {
