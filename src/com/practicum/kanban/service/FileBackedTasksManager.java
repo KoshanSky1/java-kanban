@@ -83,7 +83,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             }
 
             fileWriter.append("\n");
-            fileWriter.append("\n");
             fileWriter.append(historyToString(historyManager));
 
         } catch (IOException exception) {
@@ -193,7 +192,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         try (FileReader reader = new FileReader(file)) {
             BufferedReader br = new BufferedReader(reader);
             String line = br.readLine(); //Skip header
-
             while (br.ready()) {
                 line = br.readLine();
                 System.out.println(line);
@@ -203,11 +201,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     break;
                 }
             }
-            line = br.readLine(); //Skip empty line
             line = br.readLine();
             manager.restoreHistory(historyFromString(line));
 
-            manager.id = manager.getMaxId();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -242,6 +238,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         TaskStatus status = TaskStatus.valueOf(lineContents[3]);
         String description = lineContents[4];
 
+        if (super.id < id) {
+            super.id = id;
+        }
+
         if (type == TASK) {
             task = new Task(id, name, description, status);
             allTasks.put(id, task);
@@ -252,6 +252,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             Integer epicID = Integer.valueOf(lineContents[5]);
             task = new Subtask(id, name, description, status, epicID);
             allSubtasks.put(id, (Subtask) task);
+
+            Epic epic = allEpics.get(((Subtask) task).getEpicId());
+            List<Integer> subtasks = epic.getSubtasksId();
+            subtasks.add(((Subtask) task).getId());
         }
         return task;
     }
@@ -268,22 +272,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             }
         }
         return history;
-    }
-
-    private int getMaxId() {
-        List<Integer> identifiers = new ArrayList<>();
-        int max = 0;
-
-        identifiers.addAll(allTasks.keySet());
-        identifiers.addAll(allEpics.keySet());
-        identifiers.addAll(allSubtasks.keySet());
-
-        for (int i = 0; i <= identifiers.size(); i++) {
-            if (i > max) {
-                max = i;
-            }
-        }
-        return max;
     }
 
     private void restoreHistory(List<Integer> arraylist) {
