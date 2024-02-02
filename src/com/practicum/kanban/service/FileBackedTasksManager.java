@@ -9,12 +9,15 @@ import static com.practicum.kanban.model.TaskType.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
     private final Path file;
-
     private static final String TITLE = "id,type,name,status,description,epic";
 
     public FileBackedTasksManager(Path file) {
@@ -22,44 +25,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     public static void main(String[] args) throws IOException {
-
         File fileKanban = new File("C:/Users/StrateX/dev/java-kanban/kanban.csv");
 
-        InMemoryTaskManager manager = new FileBackedTasksManager(fileKanban.toPath());
-
-        Task taskNumberOne = new Task(null, "Купить корм для котиков",
-                "Grandorf с курицей - 18 баночек", TaskStatus.NEW);
-        manager.createNewTask(taskNumberOne);
-
-        Task taskNumberTwo = new Task(null, "Купить eду для синичек",
-                "Нежареные! семечки/ корм для попугаев", TaskStatus.NEW);
-        manager.createNewTask(taskNumberTwo);
-
-        Epic epicNumberOne = new Epic(null, "Вакцинация кошек", "ежегодная",
-                TaskStatus.NEW);
-        manager.createNewEpic(epicNumberOne);
-
-        Subtask subtaskNumberOne = new Subtask(null, "Купить препараты", "Нобивак",
-                TaskStatus.DONE, epicNumberOne.getId());
-        manager.createNewSubtask(subtaskNumberOne);
-
-        Subtask subtaskNumberTwo = new Subtask(null, "Записаться к ветеринару",
-                "на 10 февраля", TaskStatus.IN_PROGRESS, epicNumberOne.getId());
-        manager.createNewSubtask(subtaskNumberTwo);
-
-        Epic EpicNumberTwo = new Epic(null, "Навести порядок в шкафу в ванной",
-                "+ пополнить запасы", TaskStatus.NEW);
-        manager.createNewEpic(EpicNumberTwo);
-
-        manager.getTaskById(1);
-        manager.getEpicById(3);
-        manager.getSubtaskById(4);
-
         loadFromFile(new File("C:/Users/StrateX/dev/java-kanban/kanban.csv"));
-
     }
 
-    public void save() {
+    public void save() throws ManagerSaveException {
         try (BufferedWriter fileWriter = Files.newBufferedWriter(file)) {
             fileWriter.append(TITLE);
             fileWriter.append("\n");
@@ -88,7 +59,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         } catch (IOException exception) {
             throw new ManagerSaveException(exception.getMessage());
         }
+
     }
+
 
     @Override
     public void createNewTask(Task task) {
@@ -186,15 +159,16 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         save();
     }
 
-    protected static FileBackedTasksManager loadFromFile(File file) {
+    public static FileBackedTasksManager loadFromFile(File file) {
         FileBackedTasksManager manager = new FileBackedTasksManager(file.toPath());
 
         try (FileReader reader = new FileReader(file)) {
             BufferedReader br = new BufferedReader(reader);
             String line = br.readLine(); //Skip header
+
             while (br.ready()) {
                 line = br.readLine();
-                System.out.println(line);
+
                 if (!line.isEmpty() && !line.isBlank()) {
                     manager.fromString(line);
                 } else {
@@ -203,7 +177,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             }
             line = br.readLine();
             manager.restoreHistory(historyFromString(line));
-
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -221,41 +194,51 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
 
         int index = sb.length();
-
         if (sb.length() >= 1) {
             sb.delete(index - 1, index);
+
         }
         return sb.toString();
     }
 
     private Task fromString(String value) {
         Task task = null;
-
         String[] lineContents = value.split(",");
         Integer id = Integer.parseInt(lineContents[0]);
         TaskType type = TaskType.valueOf(lineContents[1]);
         String name = lineContents[2];
         TaskStatus status = TaskStatus.valueOf(lineContents[3]);
         String description = lineContents[4];
+        LocalDateTime startTime;
+        Duration duration;
 
+        if (!lineContents[5].equals("null")) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy.HH:mm");
+            startTime = LocalDateTime.parse(lineContents[5], formatter);
+        } else {
+            startTime = null;
+        }
+        if (!lineContents[6].equals("null")) {
+            duration = Duration.ofDays(Long.parseLong(lineContents[6]));
+        } else {
+            duration = null;
+        }
         if (super.id < id) {
             super.id = id;
         }
-
         if (type == TASK) {
-            task = new Task(id, name, description, status);
+            task = new Task(id, name, description, status, startTime, duration);
             allTasks.put(id, task);
         } else if (type == EPIC) {
-            task = new Epic(id, name, description, status);
+            task = new Epic(id, name, description, status, startTime, duration);
             allEpics.put(id, (Epic) task);
         } else if (type == SUBTASK) {
-            Integer epicID = Integer.valueOf(lineContents[5]);
-            task = new Subtask(id, name, description, status, epicID);
+            Integer epicID = Integer.valueOf(lineContents[7]);
+            task = new Subtask(id, name, description, status, startTime, duration, epicID);
             allSubtasks.put(id, (Subtask) task);
-
             Epic epic = allEpics.get(((Subtask) task).getEpicId());
             List<Integer> subtasks = epic.getSubtasksId();
-            subtasks.add(((Subtask) task).getId());
+            subtasks.add(task.getId());
         }
         return task;
     }
@@ -265,7 +248,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
         if (value != null && !value.isEmpty()) {
             String[] split = value.split(",");
-
             for (String number : split) {
                 Integer id = Integer.valueOf(number);
                 history.add(id);

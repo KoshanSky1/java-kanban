@@ -1,11 +1,14 @@
 package com.practicum.kanban.model;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 public class Subtask extends Task {
 
     private Integer epicId;
 
-    public Subtask(Integer id, String name, String description, TaskStatus status, Integer epicID) {
-        super(id, name, description, status);
+    public Subtask(Integer id, String name, String description, TaskStatus status, LocalDateTime startTime, Duration duration, Integer epicID) {
+        super(id, name, description, status, startTime, duration);
         this.epicId = epicID;
     }
 
@@ -25,6 +28,7 @@ public class Subtask extends Task {
     @Override
     public String toString() {
         String result = super.toString();
+
         result = result + "," + epicId;
         return result;
     }
