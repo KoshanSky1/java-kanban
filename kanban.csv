@@ -1,7 +1,12 @@
 id,type,name,status,description,epic
-1,TASK,Task №1,NEW,description of Task №1,null,10
-2,EPIC,Epic №1,IN_PROGRESS,description of Epic №1,08.03.2023.10:00,null
-4,EPIC,Epic №1,DONE,description of Epic №1,null,null
+1,TASK,Task №1,NEW,description of Task №1,null,null
+2,EPIC,Epic №1,IN_PROGRESS,description of Epic №1,08.03.2023.10:00,600
+5,EPIC,Epic №2,DONE,description of Epic №2,null,null
+6,EPIC,Epic,IN_PROGRESS,checkTheStartTimeAndEndTimeAndDuration,15.04.2024.10:00,150060
 3,SUBTASK,Subtask №1,IN_PROGRESS,description of Subtask №1,08.03.2023.10:00,120,2
+4,SUBTASK,Subtask №2,IN_PROGRESS,description of Subtask №2,08.03.2023.19:00,60,2
+7,SUBTASK,Subtask1,IN_PROGRESS,checkTheStartTimeAndEndTimeAndDuration,15.04.2024.10:00,20,6
+8,SUBTASK,Subtask2,IN_PROGRESS,checkTheStartTimeAndEndTimeAndDuration,08.05.2024.15:00,60,6
+9,SUBTASK,Subtask3,IN_PROGRESS,checkTheStartTimeAndEndTimeAndDuration,28.07.2024.14:00,60,6
 
-1,2,3
+1,4

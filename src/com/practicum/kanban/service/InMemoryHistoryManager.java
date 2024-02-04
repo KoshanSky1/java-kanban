@@ -5,7 +5,6 @@ import com.practicum.kanban.model.Task;
 import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
-
     private final Map<Integer, Node> taskNodeMap = new HashMap<>();
     private Node head = null;
     private Node tail = null;
@@ -32,7 +31,6 @@ public class InMemoryHistoryManager implements HistoryManager {
         return getTasks();
     }
 
-
     private Node linkLast(Task task) {
         Node newNode = new Node(task, tail, null);
 
@@ -41,6 +39,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         } else {
             tail.setNext(newNode);
         }
+
         tail = newNode;
         return newNode;
     }
@@ -75,6 +74,7 @@ public class InMemoryHistoryManager implements HistoryManager {
             history.add(currentNode.getValue());
             currentNode = currentNode.getNext();
         }
+
         return history;
     }
 

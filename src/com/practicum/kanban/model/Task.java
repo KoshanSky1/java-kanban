@@ -104,7 +104,6 @@ public class Task {
     @Override
     public int hashCode() {
         return Objects.hash(name, description, id, status, startTime, duration);
-
     }
 
     @Override
@@ -114,4 +113,5 @@ public class Task {
         Task task = (Task) o;
         return Objects.equals(id, task.id) && Objects.equals(name, task.name) && Objects.equals(description, task.description) && status == task.status && Objects.equals(startTime, task.startTime) && Objects.equals(duration, task.duration);
     }
+
 }

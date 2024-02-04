@@ -5,29 +5,28 @@ import com.practicum.kanban.model.Subtask;
 import com.practicum.kanban.model.Task;
 import com.practicum.kanban.model.TaskStatus;
 import com.practicum.kanban.service.TaskManager;
-import org.testng.annotations.Test;
-
+import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
-import static org.testng.Assert.*;
+import static java.time.LocalDateTime.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class TaskManagerTest<T extends TaskManager> {
     protected T manager;
-    Task taskNumberOne;
-    Epic epicNumberOne;
-    Subtask subtaskNumberOne;
-    Subtask subtaskNumberTwo;
-    Epic epicNumberTwo;
+    protected Task taskNumberOne;
+    protected Epic epicNumberOne;
+    protected Subtask subtaskNumberOne;
+    protected Subtask subtaskNumberTwo;
+    protected Epic epicNumberTwo;
 
     protected void addTestTasks() {
-        taskNumberOne = new Task(1, "Task №1",
-                "description of Task №1", TaskStatus.NEW,
-                null,
-                Duration.ofMinutes(10));
+        taskNumberOne = new Task(1, "Task №1", "description of Task №1", TaskStatus.NEW,
+                null, null);
         manager.createNewTask(taskNumberOne);
 
         epicNumberOne = new Epic(2, "Epic №1",
@@ -37,21 +36,20 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
         subtaskNumberOne = new Subtask(3, "Subtask №1",
                 "description of Subtask №1", TaskStatus.IN_PROGRESS,
-                LocalDateTime.of(2023, 3, 8, 10, 0),
+                of(2023, 3, 8, 10, 0),
                 Duration.ofMinutes(120), epicNumberOne.getId());
         manager.createNewSubtask(subtaskNumberOne);
 
         subtaskNumberTwo = new Subtask(4, "Subtask №2",
-                "descriptio`n of Subtask №2", TaskStatus.IN_PROGRESS,
-                LocalDateTime.of(2023, 3, 8, 19, 0),
+                "description of Subtask №2", TaskStatus.IN_PROGRESS,
+                of(2023, 3, 8, 19, 0),
                 Duration.ofMinutes(60), epicNumberOne.getId());
         manager.createNewSubtask(subtaskNumberTwo);
 
-        epicNumberTwo = new Epic(null, "Epic №1",
-                "description of Epic №1", TaskStatus.DONE,
+        epicNumberTwo = new Epic(null, "Epic №2",
+                "description of Epic №2", TaskStatus.DONE,
                 null, null);
         manager.createNewEpic(epicNumberTwo);
-
     }
 
     @Test
@@ -70,8 +68,10 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         final Epic savedEpic = manager.getEpicById(epicNumberOne.getId());
         assertNotNull(epicNumberOne, "Эпик не найден.");
         assertEquals(epicNumberOne, savedEpic, "Эпики не совпадают.");
-        assertEquals(savedEpic.getStartTime(), LocalDateTime.of(2023, 3, 8,
-                10, 0), "Время начала не совпадает");
+        assertEquals(savedEpic.getStartTime(), of(2023, 3, 8, 10, 0),
+                "Время начала не совпадает");
+        assertEquals(savedEpic.getEndTime(), of(2023, 3, 8, 20, 0),
+                "Время окончания не совпадает");
         assertEquals(savedEpic.getStatus(), TaskStatus.IN_PROGRESS, "Статус не совпадает");
         final List<Epic> epiсs = manager.getAllEpics();
         assertNotNull(epiсs, "Эпики не возвращаются.");
@@ -86,7 +86,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(subtaskNumberOne, savedSubtask, "Подзадачи не совпадают.");
         final List<Subtask> subtasks = manager.getAllSubtasks();
         assertNotNull(subtasks, "Подзадачи на возвращаются.");
-        assertEquals(1, subtasks.size(), "Неверное количество подзадач.");
+        assertEquals(2, subtasks.size(), "Неверное количество подзадач.");
         assertEquals(subtaskNumberOne, subtasks.get(0), "Подзадачи не совпадают.");
     }
 
@@ -102,7 +102,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void getAllTasksWithAnEmptyTaskList() {
-        manager.deleteAllTasks(); //?
+        manager.deleteAllTasks();
         List<Task> expected = manager.getAllTasks();
         assertTrue(expected.isEmpty(), "Список задач пуст.");
     }
@@ -120,7 +120,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void getAllEpicsWithAnEmptyEpicList() {
-        manager.deleteAllEpics(); //?
+        manager.deleteAllEpics();
         List<Epic> expected = manager.getAllEpics();
         assertTrue(expected.isEmpty(), "Список эпиков пуст.");
     }
@@ -129,28 +129,26 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     void getAllSubtasks() {
         List<Subtask> actual = new ArrayList<>();
         actual.add(subtaskNumberOne);
+        actual.add(subtaskNumberTwo);
         List<Subtask> expected = manager.getAllSubtasks();
         assertNotNull(expected, "Подзадачи не возвращаются.");
-        assertEquals(1, expected.size(), "Неверное количество подзадач.");
+        assertEquals(2, expected.size(), "Неверное количество подзадач.");
         assertEquals(expected, actual, "Списки не совпадают.");
     }
 
     @Test
     void getAllSubtasksWithAnEmptySubtaskList() {
-        manager.deleteAllSubtasks(); //?
+        manager.deleteAllSubtasks();
         List<Subtask> expected = manager.getAllSubtasks();
         assertTrue(expected.isEmpty(), "Список подзадач пуст.");
     }
 
     @Test
     void deleteAllTasks() {
-        manager.createNewTask(taskNumberOne);
-        ;
         manager.deleteAllTasks();
         List<Task> expected = manager.getAllTasks();
         assertTrue(expected.isEmpty(), "Cписок задач пуст");
     }
-
 
     @Test
     void deleteAllTasksWithAnEmptyTaskList() {
@@ -171,7 +169,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void deleteAllEpicsWithAnEmptyEpicList() {
         manager.deleteAllEpics();
-        List<Task> expected = manager.getAllTasks();
+        manager.deleteAllEpics();
         List<Epic> expectedEpic = manager.getAllEpics();
         List<Subtask> expectedSubtask = manager.getAllSubtasks();
         assertTrue(expectedEpic.isEmpty(), "Cписок эпиков пуст.");
@@ -289,10 +287,11 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 "Upd description of Task №77", TaskStatus.NEW,
                 null,
                 Duration.ofMinutes(10));
+
         manager.updateTask(updatedTask);
         final List<Task> tasksUpdate = manager.getAllTasks();
         assertEquals(tasksUpdate.size(), 2, "Изменился размер списка задач.");
-        assertEquals(tasksUpdate.get(0), taskNumberOne, "Изменился размер списка задач.");
+        assertEquals(tasksUpdate.get(1), updatedTask, "Задача не добавилась.");
     }
 
     @Test
@@ -313,48 +312,36 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(subtasks, subtasksUpdate, "Изменился список подзадач.");
     }
 
-
-    @Test
-    void updateEpicWithNonexistentId() {
-        Epic epicUpdate = new Epic(77, "Upd Epic №1",
-                "Upd description of Epic №1", null,
-                null, null);
-
-        manager.updateTask(epicUpdate);
-        final Task updatedTask = manager.getTaskById(77);
-        assertNotNull(updatedTask, "Эпик найден.");
-        final List<Epic> tasksUpdate = manager.getAllEpics();
-        assertEquals(tasksUpdate.size(), 2, "Изменился размер списка задач.");
-    }
-
     @Test
     void updateSubtask() {
         List<Subtask> subtasks = manager.getAllSubtasks();
         Subtask updatedSubtask = new Subtask(3, "Upd Subtask №1",
                 "description of Subtask №1", TaskStatus.IN_PROGRESS,
-                LocalDateTime.of(2023, 3, 8, 10, 0),
+                of(2023, 3, 8, 10, 0),
                 Duration.ofMinutes(120), epicNumberOne.getId());
 
         manager.updateSubtask(updatedSubtask);
         assertNotNull(updatedSubtask, "Подзадача не найдена.");
         assertEquals(manager.getSubtaskById(3), updatedSubtask, "Подзадача не обновилась");
         List<Subtask> subtasksUpd = manager.getAllSubtasks();
+        Integer epicIdUpd = updatedSubtask.getEpicId();
+        assertEquals(2, epicIdUpd, "Изменился идентификатор эпика.");
     }
 
     @Test
     void updateSubtaskWithAnEmptySubtaskList() {
         manager.deleteAllSubtasks();
         List<Subtask> subtasks = manager.getAllSubtasks();
-        Subtask subtaskUpdate = new Subtask(3, "Upd Subtask №1",
+        Subtask subtaskUpdate = new Subtask(28, "Upd Subtask №1",
                 "Upd description of Subtask №1", TaskStatus.IN_PROGRESS,
-                LocalDateTime.of(2023, 3, 8, 10, 0),
+                of(2023, 3, 8, 10, 0),
                 Duration.ofMinutes(120), epicNumberOne.getId());
 
+        manager.updateSubtask(subtaskUpdate);
         List<Subtask> subtasksUpd = manager.getAllSubtasks();
-
-        final Subtask updatedSubtask = manager.getSubtaskById(3);
-        assertNotNull(subtaskUpdate, "Подзадача найдена.");
-        assertEquals(subtasks.size(), subtasksUpd.size(), "Изменился размер списка подзадач.");
+        Subtask updatedSubtask = manager.getSubtaskById(28);
+        assertNotNull(updatedSubtask, "Подзадача найдена.");
+        assertEquals(1, subtasksUpd.size(), "Изменился размер списка подзадач.");
     }
 
     @Test
@@ -362,11 +349,14 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         List<Subtask> subtasks = manager.getAllSubtasks();
         Subtask subtaskUpdate = new Subtask(77, "Upd Subtask №1",
                 "Upd description of Subtask №1", TaskStatus.IN_PROGRESS,
-                LocalDateTime.of(2023, 3, 8, 10, 0),
+                of(2023, 3, 8, 10, 0),
                 Duration.ofMinutes(120), epicNumberOne.getId());
 
         manager.updateSubtask(subtaskUpdate);
         List<Subtask> subtasksUpd = manager.getAllSubtasks();
+        assertEquals(3, subtasksUpd.size(), "Не изменился размер списка подзадач.");
+        Integer epicIdUpd = subtaskUpdate.getEpicId();
+        assertEquals(2, epicIdUpd, "Найден идентификатор эпика.");
     }
 
     @Test
@@ -387,7 +377,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void deleteTaskByIdWithNonexistentId() {
-        manager.createNewTask(taskNumberOne);
         List<Task> tasks = manager.getAllTasks();
         manager.deleteTaskById(77);
         List<Task> tasksDel = manager.getAllTasks();
@@ -396,13 +385,11 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void deleteEpicById() {
-        List<Epic> epics = manager.getAllEpics();
-        List<Subtask> subtasks = manager.getAllSubtasks();
         manager.deleteEpicById(2);
         List<Epic> epicsDel = manager.getAllEpics();
-        assertEquals(2, epics.size(), "Эпик не удалился");
+        assertEquals(1, epicsDel.size(), "Эпик не удалился");
         List<Subtask> subtasksDel = manager.getAllSubtasks();
-        assertEquals(2, epics.size(), "Подзадачи не удалились");
+        assertEquals(0, subtasksDel.size(), "Подзадачи не удалились");
     }
 
     @Test
@@ -414,8 +401,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         List<Epic> epicsDel = manager.getAllEpics();
         List<Subtask> subtaskssDel = manager.getAllSubtasks();
         assertEquals(0, epicsDel.size(), "Список эпиков пуст.");
-        assertEquals(0, subtaskssDel.size(),
-                "Подзадачи не могут существовать с пустым списком эпиков.");
+        assertEquals(0, subtaskssDel.size(), "Подзадачи не существовуют с пустым списком эпиков.");
     }
 
     @Test
@@ -423,13 +409,14 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         List<Subtask> subtasks = manager.getAllSubtasks();
         manager.deleteSubtaskById(3);
         List<Subtask> subtasksDel = manager.getAllSubtasks();
-        assertEquals(0, subtasksDel.size(), "Подзадачи не удалились");
+        assertEquals(1, subtasksDel.size(), "Подзадача не удалились");
     }
 
     @Test
     void getSubtasksByEpic() {
         List<Subtask> actual = new ArrayList<>();
         actual.add(subtaskNumberOne);
+        actual.add(subtaskNumberTwo);
         List<Subtask> expected = manager.getSubtasksByEpic(2);
         assertEquals(actual, expected, "Списки подзадач различаются.");
     }
@@ -437,8 +424,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void getSubtasksByEpicWithAnEmptySubtaskList() {
         manager.deleteAllSubtasks();
-        List<Subtask> expected =
-                manager.getSubtasksByEpic(2);
+        List<Subtask> expected = manager.getSubtasksByEpic(2);
         assertEquals(0, expected.size(), "Список подзадач пустой.");
     }
 
@@ -447,17 +433,82 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         manager.getTaskById(taskNumberOne.getId());
         manager.getEpicById(epicNumberOne.getId());
         manager.getSubtaskById(subtaskNumberOne.getId());
+        manager.getSubtaskById(subtaskNumberTwo.getId());
         List<Task> actual = new ArrayList<>();
         actual.add(taskNumberOne);
         actual.add(epicNumberOne);
         actual.add(subtaskNumberOne);
+        actual.add(subtaskNumberTwo);
         List<Task> expected = manager.getHistory();
         assertEquals(actual, expected, "История различается");
     }
 
     @Test
     void getHistoryWithAnEmptySubtaskList() {
+        manager.deleteAllTasks();
+        manager.deleteAllEpics();
+        manager.deleteAllSubtasks();
         List<Task> expected = manager.getHistory();
         assertEquals(0, expected.size(), "История пуста.");
     }
+
+    @Test
+    void checkTheIntersectionOfTasks() {
+        Subtask subtask = new Subtask(null, "Subtask",
+                "checkTheIntersectionOfTasks", TaskStatus.IN_PROGRESS,
+                of(2023, 3, 8, 19, 30),
+                Duration.ofMinutes(60), epicNumberOne.getId());
+        manager.createNewSubtask(subtask);
+
+        Task task = new Task(1, "Task", "checkTheIntersectionOfTasks", TaskStatus.DONE,
+                of(2024, 5, 8, 19, 30),
+                Duration.ofMinutes(60));
+        manager.createNewTask(task);
+
+        Set<Task> treeSetOfTasks = manager.getPrioritizedTasks();
+        List<Task> expected = new ArrayList<>();
+        expected.add(subtaskNumberOne);
+        expected.add(subtaskNumberTwo);
+        expected.add(task);
+        expected.add(taskNumberOne);
+        assertEquals(expected.toString(), treeSetOfTasks.toString(), "Приоритет задач не сохраняется.");
+    }
+
+    @Test
+    void checkTheStartTimeAndEndTimeAndDuration() {
+        Epic epic = new Epic(null, "Epic",
+                "checkTheStartTimeAndEndTimeAndDuration", null,
+                null, null);
+        manager.createNewEpic(epic);
+
+        Subtask subtaskNumber1 = new Subtask(null, "Subtask1",
+                "checkTheStartTimeAndEndTimeAndDuration", TaskStatus.IN_PROGRESS,
+                of(2024, 4, 15, 10, 0),
+                Duration.ofMinutes(20), epic.getId());
+        manager.createNewSubtask(subtaskNumber1);
+
+        Subtask subtaskNumber2 = new Subtask(null, "Subtask2",
+                "checkTheStartTimeAndEndTimeAndDuration", TaskStatus.IN_PROGRESS,
+                of(2024, 5, 8, 15, 0),
+                Duration.ofMinutes(60), epic.getId());
+        manager.createNewSubtask(subtaskNumber2);
+
+        Subtask subtaskNumber3 = new Subtask(null, "Subtask3",
+                "checkTheStartTimeAndEndTimeAndDuration", TaskStatus.IN_PROGRESS,
+                of(2024, 7, 28, 14, 0),
+                Duration.ofMinutes(60), epic.getId());
+        manager.createNewSubtask(subtaskNumber3);
+
+        LocalDateTime start = of(2024, 4, 15, 10, 0);
+        LocalDateTime finish = of(2024, 7, 28, 15, 0);
+        Duration duration = Duration.between(start, finish);
+
+        assertEquals(epic.getStartTime(), of(2024, 4, 15, 10, 0),
+                "Время начала эпика не совпадает.");
+        assertEquals(epic.getEndTime(), of(2024, 7, 28, 15, 0),
+                "Время окончания эпика не совпадает.");
+        assertEquals(epic.getDuration(), duration, "Продолжительность эпика не совпадает.");
+
+    }
+
 }

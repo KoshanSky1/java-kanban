@@ -15,23 +15,23 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryHistoryManagerTest {
-    HistoryManager historyManager = Managers.getDefaultHistory();
+    private final HistoryManager historyManager = Managers.getDefaultHistory();
 
-    Task taskNumberOne = new Task(1, "Task №1",
+    private final Task taskNumberOne = new Task(1, "Task №1",
             "description of Task №1", TaskStatus.NEW,
             null,
             Duration.ofMinutes(10));
 
-    Epic epicNumberOne = new Epic(2, "Epic №1",
+    private final Epic epicNumberOne = new Epic(2, "Epic №1",
             "description of Epic №1", TaskStatus.NEW,
             null, null);
 
-    Subtask subtaskNumberOne = new Subtask(3, "Subtask №1",
+    private final Subtask subtaskNumberOne = new Subtask(3, "Subtask №1",
             "description of Subtask №1", TaskStatus.NEW,
             LocalDateTime.of(2024, 5, 1, 10, 0),
             Duration.ofMinutes(10), epicNumberOne.getId());
 
-    Subtask subtaskNumberTwo = new Subtask(4, "Subtask №3",
+    private final Subtask subtaskNumberTwo = new Subtask(4, "Subtask №3",
             "description of Subtask №3", TaskStatus.IN_PROGRESS,
             LocalDateTime.of(2028, 5, 1, 10, 0),
             Duration.ofMinutes(10), epicNumberOne.getId());

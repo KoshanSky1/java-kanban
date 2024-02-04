@@ -4,7 +4,6 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 public class Subtask extends Task {
-
     private Integer epicId;
 
     public Subtask(Integer id, String name, String description, TaskStatus status, LocalDateTime startTime, Duration duration, Integer epicID) {

@@ -1,8 +1,11 @@
 package com.practicum.kanban.service;
+
 import com.practicum.kanban.model.Epic;
 import com.practicum.kanban.model.Subtask;
 import com.practicum.kanban.model.Task;
+
 import java.util.List;
+import java.util.Set;
 
 public interface TaskManager {
 
@@ -48,4 +51,5 @@ public interface TaskManager {
 
     List<Task> getHistory();
 
+    Set<Task> getPrioritizedTasks();
 }

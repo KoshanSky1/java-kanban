@@ -21,7 +21,6 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         addTestTasks();
     }
 
-
     @Test
     void calculateEpicStatus() {
         Epic epicNumberOne = new Epic(null, "Epic №1",
@@ -35,18 +34,15 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
                 Duration.ofMinutes(120), epicNumberOne.getId());
         manager.createNewSubtask(subtaskNumberOne);
 
-
         Subtask subtaskNumberTwo = new Subtask(null, "Subtask №2",
                 "description of Subtask №2", TaskStatus.NEW,
                 LocalDateTime.of(2023, 3, 8, 19, 0),
                 Duration.ofMinutes(180), epicNumberOne.getId());
         manager.createNewSubtask(subtaskNumberTwo);
 
-
         manager.calculateEpicStatus(epicNumberOne);
         assertEquals(TaskStatus.IN_PROGRESS, epicNumberOne.getStatus());
     }
-
 
     @Test
     void calculateEpicStatusWithoutSubtasks() {
@@ -70,7 +66,6 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
                 Duration.ofMinutes(120), epicNumberOne.getId());
         manager.createNewSubtask(subtaskNumberOne);
 
-
         Subtask subtaskNumberTwo = new Subtask(null, "Subtask №2",
                 "description of Subtask №2", TaskStatus.NEW,
                 LocalDateTime.of(2023, 3, 8, 19, 0),
@@ -87,7 +82,6 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
         assertEquals(NEW, epicNumberOne.getStatus());
     }
 
-
     @Test
     void calculateEpicStatusWithSllSubtasksHavingTheStatusDone() {
         Epic epicNumberOne = new Epic(null, "Epic №1",
@@ -101,7 +95,6 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
                 Duration.ofMinutes(120), epicNumberOne.getId());
         manager.createNewSubtask(subtaskNumberOne);
 
-
         Subtask subtaskNumberTwo = new Subtask(null, "Subtask №2",
                 "description of Subtask №2", TaskStatus.DONE,
                 LocalDateTime.of(2023, 3, 8, 19, 0),
@@ -114,11 +107,9 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
                 Duration.ofMinutes(25), epicNumberOne.getId());
         manager.createNewSubtask(subtaskNumberThree);
 
-
         manager.calculateEpicStatus(epicNumberOne);
         assertEquals(TaskStatus.DONE, epicNumberOne.getStatus());
     }
-
 
     @Test
     void calculateEpicStatusWithSllSubtasksHavingTheInProgress() {
@@ -133,7 +124,6 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
                 Duration.ofMinutes(120), epicNumberOne.getId());
         manager.createNewSubtask(subtaskNumberOne);
 
-
         Subtask subtaskNumberTwo = new Subtask(null, "Subtask №2",
                 "description of Subtask №2", TaskStatus.IN_PROGRESS,
                 LocalDateTime.of(2023, 3, 8, 19, 0),
@@ -145,7 +135,6 @@ class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
                 LocalDateTime.of(2023, 3, 9, 15, 0),
                 Duration.ofMinutes(25), epicNumberOne.getId());
         manager.createNewSubtask(subtaskNumberThree);
-
 
         manager.calculateEpicStatus(epicNumberOne);
         assertEquals(TaskStatus.IN_PROGRESS, epicNumberOne.getStatus());

@@ -19,6 +19,11 @@ public class Epic extends Task {
         return TaskType.EPIC;
     }
 
+    @Override
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
     public List<Integer> getSubtasksId() {
         return subtasksId;
     }

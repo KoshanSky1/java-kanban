@@ -9,7 +9,6 @@ import static com.practicum.kanban.model.TaskType.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -26,6 +25,37 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     public static void main(String[] args) throws IOException {
         File fileKanban = new File("C:/Users/StrateX/dev/java-kanban/kanban.csv");
+        InMemoryTaskManager manager = new FileBackedTasksManager(fileKanban.toPath());
+
+        Task taskNumberOne = new Task(1, "Task №1", "description of Task №1", TaskStatus.NEW,
+                null, null);
+        manager.createNewTask(taskNumberOne);
+
+        Epic epicNumberOne = new Epic(2, "Epic №1",
+                "description of Epic №1", TaskStatus.NEW,
+                null, null);
+        manager.createNewEpic(epicNumberOne);
+
+        Subtask subtaskNumberOne = new Subtask(3, "Subtask №1",
+                "description of Subtask №1", TaskStatus.IN_PROGRESS,
+                LocalDateTime.of(2023, 3, 8, 10, 0),
+                Duration.ofMinutes(120), epicNumberOne.getId());
+        manager.createNewSubtask(subtaskNumberOne);
+
+        Subtask subtaskNumberTwo = new Subtask(4, "Subtask №2",
+                "description of Subtask №2", TaskStatus.IN_PROGRESS,
+                LocalDateTime.of(2023, 3, 8, 19, 0),
+                Duration.ofMinutes(60), epicNumberOne.getId());
+        manager.createNewSubtask(subtaskNumberTwo);
+
+        Epic epicNumberTwo = new Epic(null, "Epic №2",
+                "description of Epic №2", TaskStatus.DONE,
+                null, null);
+        manager.createNewEpic(epicNumberTwo);
+
+        manager.getTaskById(1);
+        manager.getEpicById(3);
+        manager.getSubtaskById(4);
 
         loadFromFile(new File("C:/Users/StrateX/dev/java-kanban/kanban.csv"));
     }
@@ -61,7 +91,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
 
     }
-
 
     @Override
     public void createNewTask(Task task) {
@@ -175,8 +204,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     break;
                 }
             }
+
             line = br.readLine();
             manager.restoreHistory(historyFromString(line));
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -196,7 +227,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         int index = sb.length();
         if (sb.length() >= 1) {
             sb.delete(index - 1, index);
-
         }
         return sb.toString();
     }
@@ -218,14 +248,17 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         } else {
             startTime = null;
         }
+
         if (!lineContents[6].equals("null")) {
-            duration = Duration.ofDays(Long.parseLong(lineContents[6]));
+            duration = Duration.ofMinutes(Long.parseLong(lineContents[6]));
         } else {
             duration = null;
         }
+
         if (super.id < id) {
             super.id = id;
         }
+
         if (type == TASK) {
             task = new Task(id, name, description, status, startTime, duration);
             allTasks.put(id, task);
