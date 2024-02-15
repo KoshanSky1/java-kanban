@@ -40,6 +40,9 @@ public class Task {
     }
 
     public int getId() {
+        if (id == null) {
+            return -1;
+        }
         return id;
     }
 

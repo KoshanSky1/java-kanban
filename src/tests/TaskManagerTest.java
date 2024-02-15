@@ -508,6 +508,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(epic.getEndTime(), of(2024, 7, 28, 15, 0),
                 "Время окончания эпика не совпадает.");
         assertEquals(epic.getDuration(), duration, "Продолжительность эпика не совпадает.");
+        
 
     }
 
